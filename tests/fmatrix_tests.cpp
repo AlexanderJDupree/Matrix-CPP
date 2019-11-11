@@ -13,6 +13,7 @@ https://github.com/AlexanderJDupree/matrix-cpp
 
 #include <iostream>
 #include <catch.hpp>
+#include <mmult.hpp>
 #include <fmatrix.hpp>
 
 TEST_CASE("Constructing Matrices", "[constructors], [fmatrix]")
@@ -139,17 +140,28 @@ TEST_CASE("Matrix Multiplication", "[multiplication], [fmatrix]")
                           , 0, 1, 0
                           , 0, 0, 1 };
 
+    Matrix_Multiplier mmult;
+
     SECTION("Multiplication by the identity is commutative")
     {
-        REQUIRE(A * I3 == I3 * A);
+        REQUIRE(mmult(I3, A) == mmult(A, I3));
     }
     SECTION("Multiplication by an inverse returns the identiy")
     {
-        REQUIRE(A * A_Inverse == I3);
+        REQUIRE(mmult(A, A_Inverse) == I3);
     }
-    SECTION("Inverse Multiplication is commutative")
+    SECTION("Multiplying an NxM matrix by an MxP matrix returns an NxP matrix")
     {
-        REQUIRE(A * A_Inverse == A_Inverse * A);
-    }
+        FMatrix<int,2,3> A { 1, 2, 3
+                           , 1, 1, 1 };
 
+        FMatrix<int,3,4> B { 1, 2, 3, 4
+                           , 1, 2, 2, 1
+                           , 1, 1, 0, 1 };
+
+        FMatrix<int,2,4> C { 6, 9, 7, 9
+                           , 3, 5, 5, 6 };
+
+        REQUIRE(mmult(A, B) == C);
+    }
 }

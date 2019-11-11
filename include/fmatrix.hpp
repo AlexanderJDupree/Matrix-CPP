@@ -45,8 +45,8 @@ public:
     const_iterator end() const noexcept { return _fmat + (n * m); };
 
     // [] index operator is NOT safe
-    iterator       operator[](unsigned i) noexcept       { return _fmat + (n * i); }
-    const_iterator operator[](unsigned i) const noexcept { return _fmat + (n * i); }
+    iterator       operator[](unsigned i) noexcept       { return _fmat + (m * i); }
+    const_iterator operator[](unsigned i) const noexcept { return _fmat + (m * i); }
 
     T& operator()(unsigned i, unsigned j)             { return at(i, j); }
     const T& operator()(unsigned i, unsigned j) const { return at(i, j); }
@@ -66,13 +66,16 @@ public:
     template <typename U, unsigned v, unsigned w>
     friend FMatrix<U, v, w> operator*(const U& scalar, const FMatrix<U,v,w>& rhs);
 
+    /* 
     template <unsigned p>
     FMatrix<T, n, p> multiply (const FMatrix<T, m, p>& rhs) const;
     template <unsigned p>
     FMatrix<T, n, p> operator* (const FMatrix<T, m, p>& rhs) const;
+    */
 
     /* Comparison Operations */
     bool operator == (const FMatrix<T, n, m>& rhs) const noexcept;
+    bool operator != (const FMatrix<T, n, m>& rhs) const noexcept;
 
     /* Flat Matrix Array */
     T _fmat[n * m] = {};
@@ -112,7 +115,7 @@ T& FMatrix<T,n,m>::at_unsafe(unsigned i, unsigned j) noexcept
 template <typename T, unsigned n, unsigned m>
 unsigned FMatrix<T,n,m>::index(unsigned i, unsigned j) const noexcept
 {
-    return (i * n) + j;
+    return (i * m) + j;
 }
 
 /* ARITHMETIC OPERATIONS */
@@ -180,25 +183,12 @@ FMatrix<T,n,m> operator*(const T& scalar, const FMatrix<T,n,m>& rhs)
     return rhs.multiply(scalar);
 }
 
+/*
 template <typename T, unsigned n, unsigned m>
 template <unsigned p>
 FMatrix<T, n, p> FMatrix<T,n,m>::multiply (const FMatrix<T, m, p>& rhs) const
 {
-    FMatrix<T,n,p> C;
-
-    for (unsigned i = 0; i < n; ++i)
-    {
-        for (unsigned j = 0; j < p; ++j)
-        {
-            T sum = 0;
-            for (unsigned k = 0; k < m; ++k)
-            {
-                sum += (*this)[i][k] * rhs[k][j];
-            }
-            C[i][j] = sum;
-        }
-    }
-    return C;
+    return Iterative_Multiplier<T,n,m,p>()(*this, rhs);
 }
 
 template <typename T, unsigned n, unsigned m>
@@ -207,12 +197,19 @@ FMatrix<T, n, p> FMatrix<T,n,m>::operator* (const FMatrix<T, m, p>& rhs) const
 {
     return multiply(rhs);
 }
+*/
 
 /* EQUIVALENCE OPERATIONS */
 template <typename T, unsigned n, unsigned m>
 bool FMatrix<T,n,m>::operator==(const FMatrix<T,n,m>& rhs) const noexcept
 {
     return std::equal(begin(), end(), rhs.begin());
+}
+
+template <typename T, unsigned n, unsigned m>
+bool FMatrix<T,n,m>::operator!=(const FMatrix<T,n,m>& rhs) const noexcept
+{
+    return !(*this == rhs);
 }
 
 #endif // FLAT_MATRIX_CPP_H

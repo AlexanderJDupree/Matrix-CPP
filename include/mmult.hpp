@@ -16,18 +16,10 @@ https://github.com/AlexanderJDupree/matrix-cpp
 
 #include <fmatrix.hpp>
 
-template <typename T, unsigned n, unsigned m, unsigned p>
-class Multiplier
+class Matrix_Multiplier
 {
-    virtual FMatrix<T,n,p> operator()( const FMatrix<T,n,m>& A
-                                     , const FMatrix<T,m,p>& B) const = 0;
-
-};
-
-template <typename T, unsigned n, unsigned m, unsigned p>
-class Iterative_Multiplier : public Multiplier<T,n,m,p>
-{
-
+public:
+    template <typename T, unsigned n, unsigned m, unsigned p>
     FMatrix<T,n,p> operator()( const FMatrix<T,n,m>& A
                              , const FMatrix<T,m,p>& B) const
     {
