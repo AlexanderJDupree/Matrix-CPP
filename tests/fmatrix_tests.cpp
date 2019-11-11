@@ -15,12 +15,12 @@ https://github.com/AlexanderJDupree/matrix-cpp
 #include <catch.hpp>
 #include <fmatrix.hpp>
 
-TEST_CASE("Constructing Matrices", "[constructors], [gmatrix]")
+TEST_CASE("Constructing Matrices", "[constructors], [fmatrix]")
 {
 
 }
 
-TEST_CASE("Accessing data from a matrix", "[at], [operator], [gmatrix]")
+TEST_CASE("Accessing data from a matrix", "[at], [operator], [fmatrix]")
 {
 
     FMatrix<int, 3, 3> matrix { 1, 2, 3
@@ -74,7 +74,7 @@ TEST_CASE("Accessing data from a matrix", "[at], [operator], [gmatrix]")
     }
 }
 
-TEST_CASE("Matrix Addition", "[addition], [matrix]")
+TEST_CASE("Matrix Addition", "[addition], [fmatrix]")
 {
     FMatrix<int, 3, 3> A { 1, 2, 3
                          , 4, 5, 6
@@ -98,6 +98,29 @@ TEST_CASE("Matrix Addition", "[addition], [matrix]")
     }
     SECTION("Addition into a matrix")
     {
-        REQUIRE(A + B == C);
+        A += B;
+        REQUIRE(A == C);
+    }
+}
+
+TEST_CASE("Scalar Multiplication", "[multiplication], [scalar], [fmatrix]")
+{
+    FMatrix<int, 3, 3> A { 1, 1, 1
+                         , 1, 1, 1
+                         , 1, 1, 1 };
+
+    SECTION("Scalar Multiplication is commutative")
+    {
+        REQUIRE( 2 * A == A * 2 );
+    }
+    SECTION("Scalar Multiplication into a matrix")
+    {
+
+        FMatrix<int, 3, 3> B { 2, 2, 2
+                             , 2, 2, 2
+                             , 2, 2, 2 };
+
+        A *= 2;
+        REQUIRE( A == B );
     }
 }
