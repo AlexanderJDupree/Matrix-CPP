@@ -124,3 +124,32 @@ TEST_CASE("Scalar Multiplication", "[multiplication], [scalar], [fmatrix]")
         REQUIRE( A == B );
     }
 }
+
+TEST_CASE("Matrix Multiplication", "[multiplication], [fmatrix]")
+{
+    FMatrix<int, 3, 3> A {  7, 2,  1
+                         ,  0, 3, -1
+                         , -3, 4, -2 };
+
+    FMatrix<int, 3, 3> A_Inverse { -2,   8, -5
+                                 ,  3, -11,  7
+                                 ,  9, -34,  21 };
+
+    FMatrix<int, 3, 3> I3 { 1, 0, 0
+                          , 0, 1, 0
+                          , 0, 0, 1 };
+
+    SECTION("Multiplication by the identity is commutative")
+    {
+        REQUIRE(A * I3 == I3 * A);
+    }
+    SECTION("Multiplication by an inverse returns the identiy")
+    {
+        REQUIRE(A * A_Inverse == I3);
+    }
+    SECTION("Inverse Multiplication is commutative")
+    {
+        REQUIRE(A * A_Inverse == A_Inverse * A);
+    }
+
+}

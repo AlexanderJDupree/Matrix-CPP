@@ -63,9 +63,13 @@ public:
 
     FMatrix<T, n, m> multiply (const T& scalar) const;
     FMatrix<T, n, m> operator*(const T& scalar) const;
-
     template <typename U, unsigned v, unsigned w>
     friend FMatrix<U, v, w> operator*(const U& scalar, const FMatrix<U,v,w>& rhs);
+
+    template <unsigned p>
+    FMatrix<T, n, p> multiply (const FMatrix<T, m, p>& rhs) const;
+    template <unsigned p>
+    FMatrix<T, n, p> operator* (const FMatrix<T, m, p>& rhs) const;
 
     /* Comparison Operations */
     bool operator == (const FMatrix<T, n, m>& rhs) const noexcept;
@@ -174,6 +178,34 @@ template <typename T, unsigned n, unsigned m>
 FMatrix<T,n,m> operator*(const T& scalar, const FMatrix<T,n,m>& rhs)
 {
     return rhs.multiply(scalar);
+}
+
+template <typename T, unsigned n, unsigned m>
+template <unsigned p>
+FMatrix<T, n, p> FMatrix<T,n,m>::multiply (const FMatrix<T, m, p>& rhs) const
+{
+    FMatrix<T,n,p> C;
+
+    for (unsigned i = 0; i < n; ++i)
+    {
+        for (unsigned j = 0; j < p; ++j)
+        {
+            T sum = 0;
+            for (unsigned k = 0; k < m; ++k)
+            {
+                sum += (*this)[i][k] * rhs[k][j];
+            }
+            C[i][j] = sum;
+        }
+    }
+    return C;
+}
+
+template <typename T, unsigned n, unsigned m>
+template <unsigned p>
+FMatrix<T, n, p> FMatrix<T,n,m>::operator* (const FMatrix<T, m, p>& rhs) const
+{
+    return multiply(rhs);
 }
 
 /* EQUIVALENCE OPERATIONS */
