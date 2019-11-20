@@ -13,27 +13,23 @@ https://github.com/AlexanderJDupree/matrix-cpp
 #ifndef FLAT_MATRIX_CPP_H
 #define FLAT_MATRIX_CPP_H
 
-#include <array>
 #include <stdexcept>
 #include <algorithm>
-#include <functional>
-#include <initializer_list>
 
-// TODO SFINAE on type T to ensure T has arithmetic operators defined
-template <typename T, unsigned n, unsigned m>
+template <unsigned n, unsigned m>
 class FMatrix
 {
 public:
     
-    using iterator       = T*;
-    using const_iterator = const T*;
+    using iterator       = double*;
+    using const_iterator = const double*;
 
     /* Data Access Methods */
-    T&       at(unsigned i, unsigned j);
-    const T& at(unsigned i, unsigned j) const;
+    double&       at(unsigned i, unsigned j);
+    const double& at(unsigned i, unsigned j) const;
 
-    T&       at_unsafe(unsigned i, unsigned j) noexcept;
-    const T& at_unsafe(unsigned i, unsigned j) const noexcept;
+    double&       at_unsafe(unsigned i, unsigned j) noexcept;
+    const double& at_unsafe(unsigned i, unsigned j) const noexcept;
 
     // Returns the flat matrix index in the array
     unsigned index(unsigned i, unsigned j) const noexcept;
@@ -44,170 +40,179 @@ public:
     iterator       end() noexcept       { return _fmat + (n * m); };
     const_iterator end() const noexcept { return _fmat + (n * m); };
 
-    // [] index operator is NOT safe
+    // [] index operator is NOdouble safe
     iterator       operator[](unsigned i) noexcept       { return _fmat + (m * i); }
     const_iterator operator[](unsigned i) const noexcept { return _fmat + (m * i); }
 
-    T& operator()(unsigned i, unsigned j)             { return at(i, j); }
-    const T& operator()(unsigned i, unsigned j) const { return at(i, j); }
+    double& operator()(unsigned i, unsigned j)             { return at(i, j); }
+    const double& operator()(unsigned i, unsigned j) const { return at(i, j); }
 
     /* Arithmetic Operations */
-    FMatrix<T, n, m> add        (const FMatrix<T, n, m>& rhs) const;
-    FMatrix<T, n, m> operator + (const FMatrix<T, n, m>& rhs) const;
+    FMatrix<n, m> add        (const FMatrix<n, m>& rhs) const;
+    FMatrix<n, m> operator + (const FMatrix<n, m>& rhs) const;
 
-    FMatrix<T, n, m>& add_into    (const FMatrix<T, n, m>& rhs);
-    FMatrix<T, n, m>& operator += (const FMatrix<T, n, m>& rhs);
+    FMatrix<n, m>& add_into    (const FMatrix<n, m>& rhs);
+    FMatrix<n, m>& operator += (const FMatrix<n, m>& rhs);
 
-    FMatrix<T, n, m>& mult_into (const T& scalar);
-    FMatrix<T, n, m>& operator*=(const T& scalar);
+    FMatrix<n, m>& mult_into (const double& scalar);
+    FMatrix<n, m>& operator*=(const double& scalar);
 
-    FMatrix<T, n, m> multiply (const T& scalar) const;
-    FMatrix<T, n, m> operator*(const T& scalar) const;
-    template <typename U, unsigned v, unsigned w>
-    friend FMatrix<U, v, w> operator*(const U& scalar, const FMatrix<U,v,w>& rhs);
+    FMatrix<n, m> multiply (const double& scalar) const;
+    FMatrix<n, m> operator*(const double& scalar) const;
+    template <unsigned v, unsigned w>
+    friend FMatrix<v, w> operator*(double scalar, const FMatrix<v,w>& rhs);
 
-    /* 
     template <unsigned p>
-    FMatrix<T, n, p> multiply (const FMatrix<T, m, p>& rhs) const;
+    FMatrix<n, p> multiply (const FMatrix<m, p>& rhs) const;
     template <unsigned p>
-    FMatrix<T, n, p> operator* (const FMatrix<T, m, p>& rhs) const;
-    */
+    FMatrix<n, p> operator* (const FMatrix<m, p>& rhs) const;
 
     /* Comparison Operations */
-    bool operator == (const FMatrix<T, n, m>& rhs) const noexcept;
-    bool operator != (const FMatrix<T, n, m>& rhs) const noexcept;
+    bool operator == (const FMatrix<n, m>& rhs) const noexcept;
+    bool operator != (const FMatrix<n, m>& rhs) const noexcept;
 
     /* Flat Matrix Array */
-    T _fmat[n * m] = {};
+    double _fmat[n * m] = {};
 };
 
-/** DATA ACCESS METHODS **/
+/** DAdoubleA ACCESS MEdoubleHODS **/
 
-template <typename T, unsigned n, unsigned m>
-const T& FMatrix<T,n,m>::at(unsigned i, unsigned j) const
-{
-    if(i >= n || j >= m) { throw std::out_of_range("Matrix index out of range"); }
-
-    return _fmat[index(i, j)];
-
-}
-
-template <typename T, unsigned n, unsigned m>
-T& FMatrix<T,n,m>::at(unsigned i, unsigned j)
+template <unsigned n, unsigned m>
+const double& FMatrix<n,m>::at(unsigned i, unsigned j) const
 {
     if(i >= n || j >= m) { throw std::out_of_range("Matrix index out of range"); }
 
     return _fmat[index(i, j)];
 }
 
-template <typename T, unsigned n, unsigned m>
-const T& FMatrix<T,n,m>::at_unsafe(unsigned i, unsigned j) const noexcept
+template <unsigned n, unsigned m>
+double& FMatrix<n,m>::at(unsigned i, unsigned j)
+{
+    if(i >= n || j >= m) { throw std::out_of_range("Matrix index out of range"); }
+
+    return _fmat[index(i, j)];
+}
+
+template <unsigned n, unsigned m>
+const double& FMatrix<n,m>::at_unsafe(unsigned i, unsigned j) const noexcept
 {
     return _fmat[index(i, j)];
 }
 
-template <typename T, unsigned n, unsigned m>
-T& FMatrix<T,n,m>::at_unsafe(unsigned i, unsigned j) noexcept
+template <unsigned n, unsigned m>
+double& FMatrix<n,m>::at_unsafe(unsigned i, unsigned j) noexcept
 {
     return _fmat[index(i, j)];
 }
 
-template <typename T, unsigned n, unsigned m>
-unsigned FMatrix<T,n,m>::index(unsigned i, unsigned j) const noexcept
+template <unsigned n, unsigned m>
+unsigned FMatrix<n,m>::index(unsigned i, unsigned j) const noexcept
 {
     return (i * m) + j;
 }
 
 /* ARITHMETIC OPERATIONS */
 
-template <typename T, unsigned n, unsigned m>
-FMatrix<T,n,m> FMatrix<T,n,m>::add(const FMatrix<T,n,m>& rhs) const
+template <unsigned n, unsigned m>
+FMatrix<n,m> FMatrix<n,m>::add(const FMatrix<n,m>& rhs) const
 {
-    FMatrix<T,n,m> result;
+    FMatrix<n,m> result;
 
-    std::transform(begin(), end(), rhs.begin(), result.begin(), std::plus<T>());
+    std::transform(begin(), end(), rhs.begin(), result.begin(), std::plus<double>());
     return result;
 }
 
-template <typename T, unsigned n, unsigned m>
-FMatrix<T,n,m> FMatrix<T,n,m>::operator+(const FMatrix<T,n,m>& rhs) const
+template <unsigned n, unsigned m>
+FMatrix<n,m> FMatrix<n,m>::operator+(const FMatrix<n,m>& rhs) const
 {
     return add(rhs);
 }
 
-template <typename T, unsigned n, unsigned m>
-FMatrix<T,n,m>& FMatrix<T,n,m>::add_into(const FMatrix<T,n,m>& rhs)
+template <unsigned n, unsigned m>
+FMatrix<n,m>& FMatrix<n,m>::add_into(const FMatrix<n,m>& rhs)
 {
-    std::transform(begin(), end(), rhs.begin(), begin(), std::plus<T>());
+    std::transform(begin(), end(), rhs.begin(), begin(), std::plus<double>());
     return *this;
 }
 
-template <typename T, unsigned n, unsigned m>
-FMatrix<T,n,m>& FMatrix<T,n,m>::operator+=(const FMatrix<T,n,m>& rhs)
+template <unsigned n, unsigned m>
+FMatrix<n,m>& FMatrix<n,m>::operator+=(const FMatrix<n,m>& rhs)
 {
     return add_into(rhs);
 }
 
-template <typename T, unsigned n, unsigned m>
-FMatrix<T,n,m>& FMatrix<T,n,m>::mult_into(const T& scalar)
+template <unsigned n, unsigned m>
+FMatrix<n,m>& FMatrix<n,m>::mult_into(const double& scalar)
 {
-    std::for_each(begin(), end(), [&scalar](T& entry){ entry *= scalar; });
+    std::for_each(begin(), end(), [&scalar](double& entry){ entry *= scalar; });
     return *this;
 }
 
-template <typename T, unsigned n, unsigned m>
-FMatrix<T,n,m>& FMatrix<T,n,m>::operator*=(const T& scalar)
+template <unsigned n, unsigned m>
+FMatrix<n,m>& FMatrix<n,m>::operator*=(const double& scalar)
 {
     return mult_into(scalar);
 }
 
-template <typename T, unsigned n, unsigned m>
-FMatrix<T,n,m> FMatrix<T,n,m>::multiply(const T& scalar) const
+template <unsigned n, unsigned m>
+FMatrix<n,m> FMatrix<n,m>::multiply(const double& scalar) const
 {
-    FMatrix<T,n,m> result;
+    FMatrix<n,m> result;
 
     std::transform(begin(), end(), result.begin(), 
-                  [&scalar](const T& i){ return scalar * i; });
+                  [&scalar](const double& i){ return scalar * i; });
     return result;
 }
 
-template <typename T, unsigned n, unsigned m>
-FMatrix<T,n,m> FMatrix<T,n,m>::operator*(const T& scalar) const
+template <unsigned n, unsigned m>
+FMatrix<n,m> FMatrix<n,m>::operator*(const double& scalar) const
 {
     return multiply(scalar);
 }
 
-template <typename T, unsigned n, unsigned m>
-FMatrix<T,n,m> operator*(const T& scalar, const FMatrix<T,n,m>& rhs)
+template <unsigned n, unsigned m>
+FMatrix<n,m> operator*(double scalar, const FMatrix<n,m>& rhs)
 {
     return rhs.multiply(scalar);
 }
 
-/*
-template <typename T, unsigned n, unsigned m>
+template <unsigned n, unsigned m>
 template <unsigned p>
-FMatrix<T, n, p> FMatrix<T,n,m>::multiply (const FMatrix<T, m, p>& rhs) const
+FMatrix<n, p> FMatrix<n,m>::multiply (const FMatrix<m, p>& B) const
 {
-    return Iterative_Multiplier<T,n,m,p>()(*this, rhs);
+    FMatrix<n,p> C;
+
+    for (unsigned i = 0; i < n; ++i)
+    {
+        for (unsigned j = 0; j < p; ++j)
+        {
+            double sum = 0;
+            for (unsigned k = 0; k < m; ++k)
+            {
+                sum += (*this)[i][k] * B[k][j];
+            }
+            C[i][j] = sum;
+        }
+    }
+    return C;
 }
 
-template <typename T, unsigned n, unsigned m>
+template <unsigned n, unsigned m>
 template <unsigned p>
-FMatrix<T, n, p> FMatrix<T,n,m>::operator* (const FMatrix<T, m, p>& rhs) const
+FMatrix<n, p> FMatrix<n,m>::operator* (const FMatrix<m, p>& rhs) const
 {
     return multiply(rhs);
 }
-*/
 
 /* EQUIVALENCE OPERATIONS */
-template <typename T, unsigned n, unsigned m>
-bool FMatrix<T,n,m>::operator==(const FMatrix<T,n,m>& rhs) const noexcept
+template <unsigned n, unsigned m>
+bool FMatrix<n,m>::operator==(const FMatrix<n,m>& rhs) const noexcept
 {
     return std::equal(begin(), end(), rhs.begin());
 }
 
-template <typename T, unsigned n, unsigned m>
-bool FMatrix<T,n,m>::operator!=(const FMatrix<T,n,m>& rhs) const noexcept
+template <unsigned n, unsigned m>
+bool FMatrix<n,m>::operator!=(const FMatrix<n,m>& rhs) const noexcept
 {
     return !(*this == rhs);
 }
