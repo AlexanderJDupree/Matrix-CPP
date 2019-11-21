@@ -82,6 +82,41 @@ TEST_CASE("Accessing data from a matrix", "[at], [operator], [fmatrix]")
     }
 }
 
+TEST_CASE("Matrix transpose", "[transpose], [fmatrix]")
+{
+    FMatrix<3, 3> A { 1, 2, 3
+                    , 4, 5, 6
+                    , 7, 8, 9 };
+
+    FMatrix<3, 3> A_t { 1, 4, 7
+                      , 2, 5, 8
+                      , 3, 6, 9 };
+
+    FMatrix<2,3> B { 1, 2, 3
+                   , 4, 5, 6 };
+
+    FMatrix<3,2> B_t { 1, 4
+                     , 2, 5
+                     , 3, 6 };
+
+    FMatrix<3, 3> C { 1, 2, 3
+                    , 2, 1, 5
+                    , 3, 5, 2 };
+
+    SECTION("Transpose of a square matrix returns a square matrix transposed")
+    {
+        REQUIRE(A.transpose() == A_t);
+    }
+    SECTION("The transpose of an NxM matrix returns a transposed MxN matrix")
+    {
+        REQUIRE(B.transpose() == B_t);
+    }
+    SECTION("The transpose of a symmetric matrix is itself")
+    {
+        REQUIRE(C == C.transpose());
+    }
+}
+
 TEST_CASE("Matrix Addition", "[addition], [fmatrix]")
 {
     FMatrix<3, 3> A { 1, 2, 3
@@ -168,5 +203,15 @@ TEST_CASE("Matrix Multiplication", "[multiplication], [fmatrix]")
                        , 3, 5, 5, 6 };
 
         REQUIRE(A * B == C);
+    }
+    SECTION("Multiplying an NxM matrix by its transpose returns an NxN symmetric matrix")
+    {
+        FMatrix<2,3> B { 1, 2, 3
+                       , 4, 5, 6 };
+
+        FMatrix<2,2> BB_t { 14, 32
+                          , 32, 77 };
+
+        REQUIRE(B * B.transpose() == BB_t);
     }
 }

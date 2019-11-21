@@ -71,6 +71,9 @@ public:
     bool operator == (const FMatrix<n, m>& rhs) const noexcept;
     bool operator != (const FMatrix<n, m>& rhs) const noexcept;
 
+    /* Transformations */
+    FMatrix<m,n> transpose() const;
+
     /* Flat Matrix Array */
     double _fmat[n * m] = {};
 };
@@ -215,6 +218,22 @@ template <unsigned n, unsigned m>
 bool FMatrix<n,m>::operator!=(const FMatrix<n,m>& rhs) const noexcept
 {
     return !(*this == rhs);
+}
+
+/* TRANSFORMATIONS */
+template <unsigned n, unsigned m>
+FMatrix<m, n> FMatrix<n,m> ::transpose() const
+{
+    FMatrix<m,n> T;
+
+    for (unsigned i = 0; i < n; ++i)
+    {
+        for (unsigned j = 0; j < m; ++j)
+        {
+            T[j][i] = (*this)[i][j];
+        }
+    }
+    return T;
 }
 
 #endif // FLAT_MATRIX_CPP_H

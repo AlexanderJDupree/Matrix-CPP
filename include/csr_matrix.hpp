@@ -18,9 +18,22 @@ class CSRMatrix
 {
 public:
 
-    CSRMatrix(FMatrix<n,m> A = {});
+    using val_iterator       = std::vector<double>::iterator;
+    using const_val_iterator = std::vector<double>::const_iterator;
+
+    CSRMatrix() = default;
+    CSRMatrix(FMatrix<n,m> A);
 
     FMatrix<n,m> to_fmatrix() const;
+
+    // Value iterators iterate through all populated entries in the matrix
+    val_iterator       vbegin() noexcept       { return _vals.end(); }
+    const_val_iterator vbegin() const noexcept { return _vals.end(); }
+    val_iterator       vend() noexcept       { return _vals.end(); }
+    const_val_iterator vend() const noexcept { return _vals.end(); }
+
+    /* Transformations */
+    CSRMatrix<m,n> transpose() const;
 
     unsigned _row[n + 1]  = {};
     std::vector<double>   _vals;
@@ -67,4 +80,17 @@ FMatrix<n,m> CSRMatrix<n,m>::to_fmatrix() const
         }
     }
     return A;
+}
+
+template<unsigned n, unsigned m>
+CSRMatrix<m, n> CSRMatrix<n,m>::transpose() const
+{
+    CSRMatrix<m, n> T;
+
+    T._vals.reserve(_vals.size());
+    T._cols.reserve(_cols.size());
+
+    unsigned row_index = 0;
+
+    return T;
 }
