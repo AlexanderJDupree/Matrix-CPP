@@ -7,6 +7,7 @@ lib/
 
 # Project files
 vs*/
+.vscode/
 
 # Swap files
 *.swp
