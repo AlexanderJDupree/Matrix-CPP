@@ -146,7 +146,7 @@ TEST_CASE("Matrix Addition", "[addition], [fmatrix]")
     }
 }
 
-TEST_CASE("Scalar Multiplication", "[multiplication], [scalar], [fmatrix]")
+TEST_CASE("FMatrix Scalar Multiplication", "[multiplication], [scalar], [fmatrix]")
 {
     FMatrix<3, 3> A { 1, 1, 1
                     , 1, 1, 1

@@ -78,7 +78,13 @@ public:
     double _fmat[n * m] = {};
 };
 
-/** DAdoubleA ACCESS MEdoubleHODS **/
+template <unsigned n>
+using CVector = FMatrix<n,1>;
+
+template <unsigned n>
+using RVector = FMatrix<1,n>;
+
+/** DATA ACCESS METHODS **/
 
 template <unsigned n, unsigned m>
 const double& FMatrix<n,m>::at(unsigned i, unsigned j) const
@@ -211,7 +217,11 @@ FMatrix<n, p> FMatrix<n,m>::operator* (const FMatrix<m, p>& rhs) const
 template <unsigned n, unsigned m>
 bool FMatrix<n,m>::operator==(const FMatrix<n,m>& rhs) const noexcept
 {
-    return std::equal(begin(), end(), rhs.begin());
+    for (unsigned i = 0; i < n * m; ++i)
+    {
+        if (_fmat[i] != rhs._fmat[i]) { return false; }
+    }
+    return true;
 }
 
 template <unsigned n, unsigned m>
